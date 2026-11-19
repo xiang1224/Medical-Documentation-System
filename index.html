@@ -346,8 +346,8 @@
 
         h1 {
             text-align: center;
-            font-size: 20px;
-            margin: 5px 0 15px 0;
+            font-size: 16px;
+            margin: 0 0 15px 0;
             color: #1a365d;
             letter-spacing: 1px;
         }
@@ -392,6 +392,7 @@
 
         input[type="text"],
         input[type="date"],
+        input[type="time"],
         select {
             width: 100%;
             border: 1px solid #cbd5e1;
@@ -659,16 +660,15 @@
             text-align: center !important;
         }
 
-/* 強制設定這兩個區塊的排版一模一樣 */
-#print-c-diag, #print-c-desc {
-    display: block !important;
-    text-indent: 0 !important; /* 強制移除縮排 */
-    padding: 0 !important;
-    margin: 0 !important;
-    text-align: left !important; /* 確保靠左對齊 */
-    white-space: pre-wrap !important; /* 保留換行，但不自動縮排 */
-}
-
+        /* 診斷證明書：匯出時兩個文字層排版一致 */
+        .is-exporting #print-c-diag,
+        .is-exporting #print-c-desc {
+            text-indent: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            text-align: left !important;
+            white-space: pre-wrap !important;
+        }
 
         @media print {
 
@@ -768,6 +768,177 @@
                 margin: 1.5cm 1.4cm;
             }
         }
+
+        /* ==================== 新增分頁（血液生化／死亡證明／化驗報告）共用樣式 ==================== */
+        .tab-group {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, .35);
+        }
+
+        .blood-add-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .blood-add-bar select {
+            flex: 1;
+            width: auto;
+            text-align: left;
+            text-align-last: left;
+            font-weight: normal;
+        }
+
+        .mini-del-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 3px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .flag-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .flag-none {
+            color: #94a3b8;
+        }
+
+        .flag-normal {
+            color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        .flag-high {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .flag-low {
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+        select.val-NEG {
+            color: #16a34a;
+            background-color: #f0fdf4;
+        }
+
+        .cause-label {
+            width: 30%;
+            background-color: #f8fafc;
+            font-weight: bold;
+        }
+
+        .print-uncheck-mark {
+            display: none;
+            color: #94a3b8;
+            font-size: 16px;
+            margin-right: 6px;
+        }
+
+        .is-exporting .no-print {
+            display: none !important;
+        }
+
+        .is-exporting input[type="checkbox"]:not(:checked)~.print-uncheck-mark {
+            display: inline-block !important;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            input[type="checkbox"]:not(:checked)~.print-uncheck-mark {
+                display: inline-block !important;
+            }
+        }
+
+        /* ==================== 異常數值標記 ==================== */
+        .val-high {
+            color: #dc2626 !important;
+            font-weight: bold;
+        }
+
+        .val-low {
+            color: #2563eb !important;
+            font-weight: bold;
+        }
+
+        tr.row-high td {
+            background-color: #fef2f2;
+        }
+
+        tr.row-low td {
+            background-color: #eff6ff;
+        }
+
+        tr.row-high td,
+        tr.row-low td {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        tr.row-high input.res-input,
+        tr.row-low input.res-input {
+            background-color: transparent;
+        }
+
+        /* ==================== 醫院選擇 ==================== */
+        .hospital-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .hospital-picker select {
+            width: auto;
+            min-width: 240px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            text-align: left;
+            text-align-last: left;
+            font-weight: 600;
+        }
+
+        .hosp-line {
+            text-align: center;
+            font-weight: 800;
+            font-size: 24px;
+            color: #1a365d;
+            margin: 5px 0 4px 0;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 
@@ -775,16 +946,24 @@
     <div class="system-header">
 
         <div class="header-title">
-            <h2>🏥 聖安地列斯醫療服務隊-文書系統</h2>
+            <h2>🏥 醫療文書系統</h2>
             <span>Medical Documentation System</span>
+        </div>
+
+        <div class="hospital-picker">
+            <label for="hospital-select">🏥 目前醫院</label>
+            <select id="hospital-select"></select>
         </div>
 
         <div class="top-row">
             <div class="tab-group">
-                <button class="tab-btn active" onclick="switchForm('report-panel')">📋 警員健檢報告</button>
-                <button class="tab-btn" onclick="switchForm('cert-panel')">📜 診斷證明書</button>
-                <button class="tab-btn" onclick="switchForm('mmse-panel')">🧠 簡易智能狀態測驗</button>
-                <button class="tab-btn" onclick="window.open('blood.html', '_blank')">🩸 血液及生化檢驗報告</button>
+                <button class="tab-btn active" data-tab="report-panel" onclick="switchForm('report-panel')">📋
+                    警員健檢報告</button>
+                <button class="tab-btn" data-tab="cert-panel" onclick="switchForm('cert-panel')">📜 診斷證明書</button>
+                <button class="tab-btn" data-tab="mmse-panel" onclick="switchForm('mmse-panel')">🧠 簡易智能狀態測驗</button>
+                <button class="tab-btn" data-tab="blood-panel" onclick="switchForm('blood-panel')">🩸 血液及生化檢驗報告</button>
+                <button class="tab-btn" data-tab="death-panel" onclick="switchForm('death-panel')">⚰️ 死亡證明書</button>
+                <button class="tab-btn" data-tab="tox-panel" onclick="switchForm('tox-panel')">🧪 毒品化驗報告</button>
             </div>
 
             <div class="btn-group">
@@ -806,6 +985,7 @@
 
     <div id="report-panel" class="form-panel active">
         <div class="page-container" id="report-content">
+            <div class="hosp-name hosp-line"></div>
             <h1>警務人員健康檢查報告</h1>
 
             <table>
@@ -1128,7 +1308,8 @@
 
     <div id="cert-panel" class="form-panel">
         <div class="page-container" id="cert-content">
-            <h1>聖安地列斯醫療服務隊 (SAMS) - 診斷證明書</h1>
+            <div class="hosp-name hosp-line"></div>
+            <h1>診斷證明書</h1>
             <div class="doc-sub">MEDICAL DIAGNOSIS CERTIFICATE</div>
 
             <table>
@@ -1200,7 +1381,8 @@
 
                         <textarea id="diag-input" class="cert-req tall-textarea" data-name="疾病診斷名稱"
                             placeholder="請詳細輸入正式醫學病名..."></textarea>
-                        <div id="print-c-desc" class="print-text-block" style="border: 1px solid transparent; min-height: 40px;"></div>
+                        <div id="print-c-diag" class="print-text-block"
+                            style="border: 1px solid transparent; min-height: 40px;"></div>
                     </td>
                 </tr>
                 <tr>
@@ -1221,7 +1403,8 @@
 
                         <textarea id="order-input" class="cert-req tall-textarea" data-name="醫囑處置建議"
                             placeholder="請詳細輸入治療經過、處置建議..."></textarea>
-                        <div id="print-c-desc" class="print-text-block" style="border: 1px solid transparent; min-height: 40px;"></div>
+                        <div id="print-c-desc" class="print-text-block"
+                            style="border: 1px solid transparent; min-height: 40px;"></div>
                     </td>
                 </tr>
             </table>
@@ -1282,6 +1465,7 @@
     </div>
     <div id="mmse-panel" class="form-panel">
         <div class="page-container" id="mmse-content">
+            <div class="hosp-name hosp-line"></div>
             <h1>簡易智能狀態測驗評估報告 (MMSE)</h1>
             <div class="doc-sub">心理精神狀態臨床主觀評估表</div>
 
@@ -1459,6 +1643,514 @@
             </div>
         </div>
     </div>
+    <!-- ==================== 🩸 血液及生化檢驗報告 ==================== -->
+    <div id="blood-panel" class="form-panel">
+        <div class="page-container" id="blood-content">
+            <div class="hosp-name hosp-line"></div>
+            <h1>血液及生化檢驗報告</h1>
+            <div class="doc-sub">BLOOD &amp; BIOCHEMISTRY LABORATORY REPORT</div>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="4">👤 病患基本資料 (Patient Information)</td>
+                </tr>
+                <tr>
+                    <td style="width:15%;"><strong>姓名</strong></td>
+                    <td style="width:35%;">
+                        <input type="text" id="blood-name-input" data-name="姓名" placeholder="請輸入姓名">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td style="width:15%;"><strong>生理性別</strong></td>
+                    <td style="width:35%;">
+                        <select id="blood-gender" data-name="性別">
+                            <option value="">-- 請選擇 --</option>
+                            <option value="male">男 (Male)</option>
+                            <option value="female">女 (Female)</option>
+                        </select>
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>身分證字號</strong></td>
+                    <td>
+                        <input type="text" data-name="身分證字號" placeholder="請輸入身分證字號">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>採檢日期</strong></td>
+                    <td>
+                        <input type="date" data-name="採檢日期">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>負責醫師</strong></td>
+                    <td>
+                        <input type="text" data-name="負責醫師" placeholder="負責醫師姓名">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>報告產出日</strong></td>
+                    <td>
+                        <input type="date" data-name="報告產出日">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="blood-add-bar no-print">
+                <strong style="white-space: nowrap;">快速加入檢驗項目</strong>
+                <select id="blood-item-selector"></select>
+                <button type="button" class="btn btn-add" onclick="addBloodItem()">＋ 加入項目</button>
+            </div>
+
+            <table id="blood-table">
+                <thead>
+                    <tr>
+                        <th style="width:30%;">項目名稱</th>
+                        <th style="width:17%;" class="text-center">檢驗結果</th>
+                        <th style="width:12%;" class="text-center">單位</th>
+                        <th style="width:21%;" class="text-center">參考範圍</th>
+                        <th style="width:12%;" class="text-center">結果判定</th>
+                        <th style="width:8%;" class="text-center col-op no-print">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="blood-tbody"></tbody>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title">🔍 檢驗備註與醫師意見</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px;">
+                        <textarea data-name="檢驗備註" placeholder="請在此輸入檢驗備註或醫師意見..."></textarea>
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="2">✍️ 醫療機構與負責醫師證明簽章</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%; padding: 15px; vertical-align: top;">
+                        <strong>負責醫師簽章：</strong>
+                        <div class="sig-upload-container">
+                            <label for="blood-sig-upload" class="upload-btn">➕ 上傳醫師電子簽名檔</label>
+                            <input type="file" id="blood-sig-upload" class="sig-file-input" accept="image/*"
+                                onchange="previewSig(event, 'blood')">
+                            <div id="blood-sig-preview-wrapper" class="sig-preview-wrapper" style="display: none;">
+                                <img id="blood-sig-preview-img" class="sig-preview-img" src="" alt="醫師簽名">
+                                <button type="button" class="delete-sig-btn" onclick="removeSig('blood')">✕ 刪除</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width: 50%; padding: 15px; vertical-align: top; text-align: center;">
+                        <strong style="display: block; text-align: left; margin-bottom: 5px;">醫療機構證明專用章：</strong>
+                        <div class="hospital-stamp-wrapper">
+                            <img src="logo.png" alt="醫療機構證明專用章"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div
+                                style="display: none; color: #94a3b8; font-style: italic; font-size: 12px; margin-top: 25px;">
+                                ( 找不到印章圖片，請將印章圖片放入同目錄中或於輸出後加蓋實體關防章 )
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== ⚰️ 死亡證明書 ==================== -->
+    <div id="death-panel" class="form-panel">
+        <div class="page-container" id="death-content">
+            <div class="hosp-name hosp-line"></div>
+            <h1>死亡證明書</h1>
+            <div class="doc-sub">CERTIFICATE OF DEATH</div>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="4">👤 死亡者基本資料</td>
+                </tr>
+                <tr>
+                    <td style="width:15%;"><strong>死亡者姓名</strong></td>
+                    <td style="width:35%;">
+                        <input type="text" id="death-name-input" data-name="死亡者姓名" placeholder="請輸入姓名">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td style="width:15%;"><strong>生理性別</strong></td>
+                    <td style="width:35%;">
+                        <select id="death-gender-input" data-name="性別">
+                            <option value="">-- 請選擇 --</option>
+                            <option value="男">男 (Male)</option>
+                            <option value="女">女 (Female)</option>
+                        </select>
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>出生年月日</strong></td>
+                    <td>
+                        <input type="date" data-name="出生年月日">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>身分證字號</strong></td>
+                    <td>
+                        <input type="text" data-name="身分證字號" placeholder="請輸入身分證字號">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>死亡日期</strong></td>
+                    <td>
+                        <input type="date" data-name="死亡日期">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>死亡時間</strong></td>
+                    <td>
+                        <input type="time" data-name="死亡時間">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>死亡地點</strong></td>
+                    <td colspan="3">
+                        <input type="text" data-name="死亡地點" placeholder="例：聖安地列斯中央醫院急診室">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title">⚖️ 死亡方式</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 12px;">
+                        <div class="checkbox-group"
+                            style="flex-wrap: wrap; justify-content: flex-start; gap: 10px 26px;">
+                            <label class="checkbox-label"><input type="checkbox" class="death-manner-cb"
+                                    value="病死／自然死亡"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 病死／自然死亡</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-manner-cb"
+                                    value="意外死亡"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 意外死亡</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-manner-cb"
+                                    value="自殺"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 自殺</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-manner-cb"
+                                    value="他殺"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 他殺</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-manner-cb"
+                                    value="死因未明／待查"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 死因未明／待查</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="2">🩺 死亡原因</td>
+                </tr>
+                <tr>
+                    <td class="cause-label">（甲）直接引起死亡之疾病或傷害</td>
+                    <td>
+                        <input type="text" data-name="直接死因" placeholder="直接導致死亡的疾病或傷害">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="cause-label">（乙）引起（甲）之先行原因</td>
+                    <td>
+                        <input type="text" data-name="先行原因" placeholder="如無請留空">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="cause-label">（丙）引起（乙）之先行原因（根本死因）</td>
+                    <td>
+                        <input type="text" data-name="根本死因" placeholder="如無請留空">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="cause-label">其他促成死亡之身體狀況</td>
+                    <td>
+                        <input type="text" data-name="其他促成因素" placeholder="如無請留空">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="2">🔬 解剖與相驗</td>
+                </tr>
+                <tr>
+                    <td class="cause-label">是否解剖</td>
+                    <td style="padding: 8px 12px;">
+                        <div class="checkbox-group" style="justify-content: flex-start; gap: 26px;">
+                            <label class="checkbox-label"><input type="checkbox" class="death-autopsy-cb"
+                                    value="已解剖"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 已解剖</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-autopsy-cb"
+                                    value="未解剖"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 未解剖</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-autopsy-cb"
+                                    value="待決定"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 待決定</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="cause-label">是否通報警方／法醫相驗</td>
+                    <td style="padding: 8px 12px;">
+                        <div class="checkbox-group" style="justify-content: flex-start; gap: 26px;">
+                            <label class="checkbox-label"><input type="checkbox" class="death-report-cb"
+                                    value="已通報"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 已通報</label>
+                            <label class="checkbox-label"><input type="checkbox" class="death-report-cb"
+                                    value="無須通報"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 無須通報</label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title">📝 醫師說明與備註</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px;">
+                        <textarea class="tall-textarea" data-name="醫師說明"
+                            placeholder="請輸入搶救經過、屍體外觀所見或其他備註說明..."></textarea>
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="2">✍️ 醫療機構與開立醫師證明簽章</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%; padding: 15px; vertical-align: top;">
+                        <strong>開立醫師簽章：</strong>
+                        <div class="sig-upload-container">
+                            <label for="death-sig-upload" class="upload-btn">➕ 上傳醫師電子簽名檔</label>
+                            <input type="file" id="death-sig-upload" class="sig-file-input" accept="image/*"
+                                onchange="previewSig(event, 'death')">
+                            <div id="death-sig-preview-wrapper" class="sig-preview-wrapper" style="display: none;">
+                                <img id="death-sig-preview-img" class="sig-preview-img" src="" alt="醫師簽名">
+                                <button type="button" class="delete-sig-btn" onclick="removeSig('death')">✕ 刪除</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width: 50%; padding: 15px; vertical-align: top; text-align: center;">
+                        <strong style="display: block; text-align: left; margin-bottom: 5px;">醫療機構證明專用章：</strong>
+                        <div class="hospital-stamp-wrapper">
+                            <img src="logo.png" alt="醫療機構證明專用章"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div
+                                style="display: none; color: #94a3b8; font-style: italic; font-size: 12px; margin-top: 25px;">
+                                ( 找不到印章圖片，請將印章圖片放入同目錄中或於輸出後加蓋實體關防章 )
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding: 12px; text-align: right; font-size: 13px;">
+                        <strong>西元</strong>
+                        <input type="text" id="death-year-input" style="width: 65px; text-align: center;"
+                            placeholder="年">
+                        <span id="death-year-text" class="print-inline-text"></span> <strong>年</strong>
+                        <input type="text" id="death-month-input" style="width: 40px; text-align: center;"
+                            placeholder="月">
+                        <span id="death-month-text" class="print-inline-text"></span> <strong>月</strong>
+                        <input type="text" id="death-day-input" style="width: 40px; text-align: center;"
+                            placeholder="日">
+                        <span id="death-day-text" class="print-inline-text"></span> <strong>日 證明開立</strong>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="note-box" style="margin-top: 25px;">
+                * 備註說明：本證明書所載事項，均由合格醫師依臨床專業判斷開立。非經本醫療機構授權不得私自塗改。本證明書影本無加蓋本院騎縫/關防章者無效。
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 🧪 毒品化驗報告 ==================== -->
+    <div id="tox-panel" class="form-panel">
+        <div class="page-container" id="tox-content">
+            <div class="hosp-name hosp-line"></div>
+            <h1>毒品化驗報告</h1>
+            <div class="doc-sub">DRUG SCREENING LABORATORY REPORT</div>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="4">👤 受檢者資料與檢體紀錄</td>
+                </tr>
+                <tr>
+                    <td style="width:15%;"><strong>受檢者姓名</strong></td>
+                    <td style="width:35%;">
+                        <input type="text" id="tox-name-input" data-name="受檢者姓名" placeholder="請輸入姓名">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td style="width:15%;"><strong>生理性別</strong></td>
+                    <td style="width:35%;">
+                        <select id="tox-gender-input" data-name="性別">
+                            <option value="">-- 請選擇 --</option>
+                            <option value="男">男 (Male)</option>
+                            <option value="女">女 (Female)</option>
+                        </select>
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>身分證字號</strong></td>
+                    <td>
+                        <input type="text" data-name="身分證字號" placeholder="請輸入身分證字號">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>送驗編號</strong></td>
+                    <td>
+                        <input type="text" data-name="送驗編號" placeholder="案件／送驗編號">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>檢體類型</strong></td>
+                    <td colspan="3" style="padding: 8px 12px;">
+                        <div class="checkbox-group" style="justify-content: flex-start; gap: 26px;">
+                            <label class="checkbox-label"><input type="checkbox" value="尿液"><span
+                                    class="print-check-mark">☑</span><span class="print-uncheck-mark">☐</span>
+                                尿液</label>
+                            <label class="checkbox-label"><input type="checkbox" value="血液"><span
+                                    class="print-check-mark">☑</span><span class="print-uncheck-mark">☐</span>
+                                血液</label>
+                            <label class="checkbox-label"><input type="checkbox" value="唾液"><span
+                                    class="print-check-mark">☑</span><span class="print-uncheck-mark">☐</span>
+                                唾液</label>
+                            <label class="checkbox-label"><input type="checkbox" value="呼氣"><span
+                                    class="print-check-mark">☑</span><span class="print-uncheck-mark">☐</span>
+                                呼氣</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>採檢日期</strong></td>
+                    <td>
+                        <input type="date" data-name="採檢日期">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>報告產出日</strong></td>
+                    <td>
+                        <input type="date" data-name="報告產出日">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>檢驗人員</strong></td>
+                    <td>
+                        <input type="text" data-name="檢驗人員" placeholder="檢驗／負責醫師姓名">
+                        <div class="print-text-block"></div>
+                    </td>
+                    <td><strong>檢驗方法</strong></td>
+                    <td>
+                        <input type="text" data-name="檢驗方法" placeholder="例：免疫層析快篩">
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table id="tox-table">
+                <thead>
+                    <tr>
+                        <th style="width:34%;">檢驗項目</th>
+                        <th style="width:16%;" class="text-center">縮寫</th>
+                        <th style="width:25%;" class="text-center">判定閾值 (Cut-off)</th>
+                        <th style="width:25%;" class="text-center">檢驗結果</th>
+                    </tr>
+                </thead>
+                <tbody id="tox-tbody"></tbody>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title">🔍 綜合判定與備註</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 12px;">
+                        <div class="checkbox-group" style="justify-content: flex-start; gap: 40px;">
+                            <label class="checkbox-label" style="color: #16a34a;"><input type="checkbox"
+                                    class="tox-sum-cb" value="全數陰性"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 🟢 全數陰性</label>
+                            <label class="checkbox-label" style="color: #dc2626;"><input type="checkbox"
+                                    class="tox-sum-cb" value="有項目呈陽性反應"><span class="print-check-mark">☑</span><span
+                                    class="print-uncheck-mark">☐</span> 🔴 有項目呈陽性反應（建議送確認檢驗）</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px;">
+                        <textarea data-name="化驗備註" placeholder="請在此輸入備註、確認檢驗建議或其他說明..."></textarea>
+                        <div class="print-text-block"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <td class="section-title" colspan="2">✍️ 醫療機構與檢驗醫師證明簽章</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%; padding: 15px; vertical-align: top;">
+                        <strong>檢驗醫師簽章：</strong>
+                        <div class="sig-upload-container">
+                            <label for="tox-sig-upload" class="upload-btn">➕ 上傳醫師電子簽名檔</label>
+                            <input type="file" id="tox-sig-upload" class="sig-file-input" accept="image/*"
+                                onchange="previewSig(event, 'tox')">
+                            <div id="tox-sig-preview-wrapper" class="sig-preview-wrapper" style="display: none;">
+                                <img id="tox-sig-preview-img" class="sig-preview-img" src="" alt="醫師簽名">
+                                <button type="button" class="delete-sig-btn" onclick="removeSig('tox')">✕ 刪除</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width: 50%; padding: 15px; vertical-align: top; text-align: center;">
+                        <strong style="display: block; text-align: left; margin-bottom: 5px;">醫療機構證明專用章：</strong>
+                        <div class="hospital-stamp-wrapper">
+                            <img src="logo.png" alt="醫療機構證明專用章"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div
+                                style="display: none; color: #94a3b8; font-style: italic; font-size: 12px; margin-top: 25px;">
+                                ( 找不到印章圖片，請將印章圖片放入同目錄中或於輸出後加蓋實體關防章 )
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding: 12px; text-align: right; font-size: 13px;">
+                        <strong>西元</strong>
+                        <input type="text" id="tox-year-input" style="width: 65px; text-align: center;" placeholder="年">
+                        <span id="tox-year-text" class="print-inline-text"></span> <strong>年</strong>
+                        <input type="text" id="tox-month-input" style="width: 40px; text-align: center;"
+                            placeholder="月">
+                        <span id="tox-month-text" class="print-inline-text"></span> <strong>月</strong>
+                        <input type="text" id="tox-day-input" style="width: 40px; text-align: center;" placeholder="日">
+                        <span id="tox-day-text" class="print-inline-text"></span> <strong>日 報告開立</strong>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="note-box" style="margin-top: 25px;">
+                * 備註說明：判定閾值為一般免疫層析篩檢試劑之常用標準，實際以所使用試劑之規格為準；篩檢呈陽性者，建議再以確認檢驗方法複驗。本報告影本無加蓋本院騎縫/關防章者無效。
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
@@ -1466,33 +2158,36 @@
         let currentTabId = 'report-panel';
 
         /**
+         * 📑 各分頁設定（內容區塊、姓名欄位、匯出檔名、簽名前綴）
+         */
+        const TAB_CONFIG = {
+            'report-panel': { content: 'report-content', nameId: 'report-name-input', nameMsg: '受檢警員', label: '健檢報告', sig: 'report' },
+            'cert-panel': { content: 'cert-content', nameId: 'cert-name-input', nameMsg: '患者', label: '診斷證明書', sig: 'cert' },
+            'mmse-panel': { content: 'mmse-content', nameId: 'mmse-name-input', nameMsg: '受測者', label: '智能狀態測驗', sig: 'mmse' },
+            'blood-panel': { content: 'blood-content', nameId: 'blood-name-input', nameMsg: '病患', label: '血液生化檢驗報告', sig: 'blood' },
+            'death-panel': { content: 'death-content', nameId: 'death-name-input', nameMsg: '死亡者', label: '死亡證明書', sig: 'death' },
+            'tox-panel': { content: 'tox-content', nameId: 'tox-name-input', nameMsg: '受檢者', label: '毒品化驗報告', sig: 'tox' }
+        };
+
+        /**
          * 🔄 系統分頁無縫切換邏輯
          */
         function switchForm(tabId) {
             currentTabId = tabId;
 
-            // 切換頁籤按鈕樣式
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (tabId === 'report-panel') {
-                const btn = document.querySelectorAll('.tab-btn')[0];
-                if (btn) btn.classList.add('active');
-            } else if (tabId === 'cert-panel') {
-                const btn = document.querySelectorAll('.tab-btn')[1];
-                if (btn) btn.classList.add('active');
-            } else if (tabId === 'mmse-panel') {
-                const btn = document.querySelectorAll('.tab-btn')[2];
-                if (btn) btn.classList.add('active');
-            }
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabId);
+            });
 
-            // 切換內容面板顯示狀態
             document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
             const targetPanel = document.getElementById(tabId);
             if (targetPanel) targetPanel.classList.add('active');
         }
 
+
         /**
-         * 🎛️ 限制核取方塊複選框只能單選（精確鎖定 X光 與 綜合總評）
-         */
+                 * 🎛️ 限制核取方塊複選框只能單選（精確鎖定 X光 與 綜合總評）
+                 */
         function setupSingleCheck(className) {
             const checkboxes = document.querySelectorAll('.' + className);
             checkboxes.forEach(cb => {
@@ -1711,34 +2406,42 @@
         }
 
         /**
-         * 🧼 一鍵清除全系統所有輸入資料
+         * 🧼 一鍵清除當前分頁所有輸入資料
          */
         function clearAllSystemData() {
             if (confirm("⚠️ 確定要清空當前表單分頁內填寫的所有資料嗎？\n此動作將無法復原！")) {
                 const currentPanel = document.getElementById(currentTabId);
                 if (!currentPanel) return;
 
-                currentPanel.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+                currentPanel.querySelectorAll('input[type="text"], input[type="date"], input[type="time"], textarea').forEach(el => el.value = '');
                 currentPanel.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
                 currentPanel.querySelectorAll('select').forEach(el => {
                     el.selectedIndex = 0;
                     if (el.classList.contains('flag-select') || el.id === 'officer-gender') updateSelectStyle(el);
+                    if (el.classList.contains('pn-select')) updatePnStyle(el);
                 });
-                currentPanel.querySelectorAll('.print-text-block, .print-inline-text').forEach(el => { el.innerHTML = ''; el.textContent = ''; });
+                currentPanel.querySelectorAll('.print-text-block, .print-inline-text').forEach(el => { el.innerHTML = ''; el.textContent = ''; el.removeAttribute('style'); });
                 currentPanel.querySelectorAll('.print-rating-result').forEach(el => { el.innerHTML = ''; });
 
-                if (currentTabId === 'report-panel') removeReportSignature();
-                else if (currentTabId === 'cert-panel') removeCertSignature();
-                else if (currentTabId === 'mmse-panel') removeMmseSignature();
+                const cfg = TAB_CONFIG[currentTabId];
+                if (cfg && cfg.sig) {
+                    if (cfg.sig === 'report') removeReportSignature();
+                    else if (cfg.sig === 'cert') removeCertSignature();
+                    else if (cfg.sig === 'mmse') removeMmseSignature();
+                    else removeSig(cfg.sig);
+                }
 
-                syncInputsToPrintBlocks('mmse-panel');
+                // 血液報告：還原預設項目（移除臨時加入的項目）
+                if (currentTabId === 'blood-panel') renderBloodBase();
+
                 alert("✨ 當前分頁資料已完全清空。");
             }
         }
 
+
         /**
-         * 🔬 健檢報告自動防呆判讀邏輯
-         */
+                 * 🔬 健檢報告自動防呆判讀邏輯
+                 */
         function calculateCorrectFlag(row) {
             const inputValEl = row.querySelector('.res-input');
             if (!inputValEl) return null;
@@ -1766,12 +2469,32 @@
             return '—';
         }
 
+        /**
+         * 🚩 異常數值標記：整列底色 + 數值紅（偏高）／藍（偏低）粗體
+         * level: 'high' | 'low' | ''
+         */
+        function markAbnormalRow(tr, level) {
+            if (!tr) return;
+            tr.classList.remove('row-high', 'row-low');
+            const targets = [tr.querySelector('.res-input'), tr.querySelector('.res-input')?.parentElement.querySelector('.print-text-block')];
+            targets.forEach(el => el && el.classList.remove('val-high', 'val-low'));
+            if (level) {
+                tr.classList.add('row-' + level);
+                targets.forEach(el => el && el.classList.add('val-' + level));
+            }
+        }
+
         function updateSelectStyle(selectEl) {
             if (!selectEl) return;
             selectEl.classList.remove('val-H', 'val-L', 'val-N');
             if (selectEl.value === 'H') selectEl.classList.add('val-H');
             else if (selectEl.value === 'L') selectEl.classList.add('val-L');
             else selectEl.classList.add('val-N');
+
+            // 健檢報告：同步標記該列數值
+            if (selectEl.classList.contains('flag-select')) {
+                markAbnormalRow(selectEl.closest('tr'), selectEl.value === 'H' ? 'high' : selectEl.value === 'L' ? 'low' : '');
+            }
         }
 
         // 初始化生化指標數據自動監聽與全系統單選限縮
@@ -1825,249 +2548,113 @@
         });
 
         /**
-         * 🛑 表單防呆驗證邏輯（智慧寬容修正版：防止欄位未完全定義或空白造成系統死鎖）
+         * 🛑 表單防呆驗證邏輯（找不到欄位時自動放行，避免系統死鎖）
          */
         function validateActiveForm() {
             try {
-                if (currentTabId === 'report-panel') {
-                    const nameInput = document.getElementById('report-name-input');
-                    if (nameInput && !nameInput.value.trim()) {
-                        alert("❌ 請填寫受檢警員的「姓名」。");
-                        nameInput.focus();
-                        return false;
-                    }
-                } else if (currentTabId === 'cert-panel') {
-                    const certName = document.getElementById('cert-name-input');
-                    if (certName && !certName.value.trim()) {
-                        alert("❌ 請填寫患者的「姓名」。");
-                        certName.focus();
-                        return false;
-                    }
-                } else if (currentTabId === 'mmse-panel') {
-                    const mmseName = document.getElementById('mmse-name-input');
-                    if (mmseName && !mmseName.value.trim()) {
-                        alert("❌ 請填寫受測者的「姓名」。");
-                        mmseName.focus();
-                        return false;
-                    }
+                const cfg = TAB_CONFIG[currentTabId];
+                if (!cfg) return true;
+                const nameInput = document.getElementById(cfg.nameId);
+                if (nameInput && !nameInput.value.trim()) {
+                    alert(`❌ 請填寫${cfg.nameMsg}的「姓名」。`);
+                    nameInput.focus();
+                    return false;
                 }
-                return true; // 驗證通過
+                return true;
             } catch (error) {
                 console.error("驗證發生錯誤，已自動放行輸出以防死鎖:", error);
                 return true;
             }
         }
 
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\n/g, "<br>");
+        }
+
+        const MMSE_GROUPS = ['orientation', 'registration', 'calculation', 'recall', 'language'];
+        const MMSE_LEVELS = ['嚴重', '偏弱', '尚可', '平穩', '正常'];
+        const MMSE_THEME = {
+            '嚴重': ['#ffebee', '#e74c3c'],
+            '偏弱': ['#fff3e0', '#e67e22'],
+            '尚可': ['#e3f2fd', '#3498db'],
+            '平穩': ['#e8f5e9', '#4caf50'],
+            '正常': ['#e2f7e3', '#2ecc71']
+        };
+
         /**
-         * 👑 核心同步與渲染優化（將 Input 同步至 Print 預覽版面）
+         * 👑 核心同步：把輸入欄位內容同步到列印／匯出用的文字層
          */
         function syncInputsToPrintBlocks(panelId) {
-            const panel = document.getElementById(panelId) || document;
+            const panel = document.getElementById(panelId);
+            if (!panel) return;
 
-           
-            // 📋 1. 處理「診斷證明書」拆分年月日
-            // ===================================================================
-            if (panelId === 'cert-panel' || document.getElementById('cert-name-input')) {
-                // 日期處理
-                const y = document.getElementById('cert-year-text'); if (y) y.textContent = document.getElementById('cert-year-input')?.value || "—";
-                const m = document.getElementById('cert-month-text'); if (m) m.textContent = document.getElementById('cert-month-input')?.value || "—";
-                const d = document.getElementById('cert-day-text'); if (d) d.textContent = document.getElementById('cert-day-input')?.value || "—";
-
-                // 基本資料
-                const name = document.getElementById('print-c-name'); if (name) name.textContent = document.getElementById('cert-name-input')?.value || "—";
-                const idNo = document.getElementById('print-c-id'); if (idNo) idNo.textContent = document.getElementById('cert-id-input')?.value || "—";
-                const birth = document.getElementById('print-c-birth'); if (birth) birth.textContent = document.getElementById('cert-birth-input')?.value || "—";
-
-                // 修正點：性別同步處理
-                const certGender = document.getElementById('cert-gender-input');
-                const printCGender = document.getElementById('print-c-gender');
-
-                if (printCGender && certGender) {
-                    // 取得選取項目的文字，若沒有選擇則顯示 "—"
-                    // 使用 options[selectedIndex].text 可以拿到 "男 (Male)" 或 "女 (Female)"
-                    // 如果只要 "男" 或 "女"，可以使用 .split(' (')[0]
-                    const selectedText = certGender.selectedIndex > 0 ? certGender.options[certGender.selectedIndex].text : "—";
-                    printCGender.textContent = selectedText.split(' (')[0];
+            // 1️⃣ 通用同步：輸入框 → 文字層
+            panel.querySelectorAll('input[type="text"], input[type="date"], input[type="time"], textarea, select').forEach(el => {
+                // 年／月／日 拆分欄位：對應 xxx-year-text / xxx-month-text / xxx-day-text
+                const dm = el.id && el.id.match(/^(.+)-(year|month|day)-input$/);
+                if (dm) {
+                    const span = document.getElementById(`${dm[1]}-${dm[2]}-text`);
+                    if (span) span.textContent = el.value || "—";
+                    return;
                 }
 
-                // 診斷描述與醫囑
-                // 針對診斷 (diag) 與 醫囑 (desc) 的處理
-                const diag = document.getElementById('print-c-diag');
-                if (diag) {
-                    // 1. .trim() 去除頭尾空行
-                    // 2. 移除連續多餘的 <br> (防止看起來像段落)
-                    const val = (document.getElementById('cert-diag-input')?.value || "").trim();
-                    diag.innerHTML = val.replace(/\n/g, "<br>");
-                }
+                const block = el.parentElement?.querySelector('.print-text-block') ||
+                    el.parentElement?.querySelector('.print-inline-text');
+                if (!block) return;
 
-                const desc = document.getElementById('print-c-desc');
-                if (desc) {
-                    const val = (document.getElementById('cert-desc-input')?.value || "").trim();
-                    desc.innerHTML = val.replace(/\n/g, "<br>");
-                }
-
-                const doc = document.getElementById('print-c-doc');
-                if (doc) doc.textContent = document.getElementById('cert-doc-name-input')?.value || "—";
-            }
-
-            // ===================================================================
-            // 🧠 2. 處理「簡易智能狀態測驗 (MMSE)」資料同步
-            // ===================================================================
-            let correctMmseSuggestValue = "";
-            const allTextareas = document.querySelectorAll('textarea');
-            allTextareas.forEach(tx => {
-                if (tx.id === 'mmse-suggest' || tx.id === 'mmse-summary-input' || tx.placeholder.includes('醫囑') || tx.placeholder.includes('MMSE')) {
-                    correctMmseSuggestValue = tx.value;
+                if (el.tagName === 'SELECT') {
+                    block.textContent = (el.selectedIndex > 0) ? el.options[el.selectedIndex].text.split(' (')[0] : "—";
+                } else {
+                    block.innerHTML = escapeHtml(el.value || "—");
                 }
             });
-            if (!correctMmseSuggestValue) {
-                allTextareas.forEach(tx => {
-                    if (tx.id === 'mmse-suggest' && tx.value.trim() !== "") { correctMmseSuggestValue = tx.value; }
+
+            // 🚩 異常數值：匯出文字後加上 ↑ / ↓ 箭頭
+            panel.querySelectorAll('tr.row-high, tr.row-low').forEach(tr => {
+                const block = tr.querySelector('.res-input')?.parentElement.querySelector('.print-text-block');
+                if (block && tr.querySelector('.res-input').value.trim()) {
+                    block.innerHTML += tr.classList.contains('row-high') ? ' ↑' : ' ↓';
+                }
+            });
+
+            // 2️⃣ 化驗報告：陽性紅字／陰性綠字
+            panel.querySelectorAll('select.pn-select').forEach(sel => {
+                const block = sel.parentElement.querySelector('.print-text-block');
+                if (!block) return;
+                block.style.fontWeight = 'bold';
+                block.style.color = sel.value === '陽性' ? '#dc2626' : (sel.value === '陰性' ? '#16a34a' : '#333');
+            });
+
+            // 3️⃣ 簡易智能狀態測驗：五級評分的匯出樣式
+            if (panelId === 'mmse-panel') {
+                MMSE_GROUPS.forEach(g => {
+                    const resBlock = document.getElementById(`res-${g}`);
+                    if (!resBlock) return;
+                    const selected = document.querySelector(`input[name="${g}"]:checked`)?.value || null;
+
+                    let html = `<div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-start; align-items: center; width: 100%; box-sizing: border-box;">`;
+                    MMSE_LEVELS.forEach(opt => {
+                        if (opt === selected) {
+                            const [bg, color] = MMSE_THEME[opt];
+                            html += `<span style="display: inline-block; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 4px; background-color: ${bg}; color: ${color}; border: 1.5px solid ${color}; text-align: center; white-space: nowrap;">${opt}</span>`;
+                        } else {
+                            html += `<span style="display: inline-block; padding: 3px 6px; font-size: 11px; font-weight: normal; border-radius: 4px; background-color: #fafafa; color: #cfd8dc; border: 1px dashed #e0e0e0; text-align: center; white-space: nowrap;">${opt}</span>`;
+                        }
+                    });
+                    html += `</div>`;
+                    resBlock.innerHTML = html;
                 });
-            }
-
-            const printSummary = document.getElementById('print-m-summary') ||
-                document.querySelector('.print-summary-box') ||
-                document.querySelector('div[style*="min-height"]') ||
-                (document.querySelectorAll('.print-paper div')[4]) ||
-                document.querySelector('table + div + div');
-
-            if (printSummary) {
-                printSummary.innerHTML = correctMmseSuggestValue ? correctMmseSuggestValue.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>") : "—";
-                printSummary.style.color = "#000000";
-                printSummary.style.padding = "15px";
-            }
-
-            const mmseNameInput = document.getElementById('mmse-name-input') || document.querySelector('input[placeholder*="姓名"]');
-            const mmseDateInput = document.getElementById('mmse-date-input') || document.querySelector('input[type="date"]');
-
-            const printMmseName = document.getElementById('print-m-name') || document.querySelector('td[id="print-m-name"]');
-            const printMmseDate = document.getElementById('print-m-date') || document.querySelector('td[id="print-m-date"]');
-
-            if (mmseNameInput && mmseNameInput.value.trim() !== "") {
-                if (printMmseName) {
-                    printMmseName.textContent = mmseNameInput.value;
-                } else {
-                    const firstTableTds = document.querySelectorAll('table:first-of-type td, .report-table:first-of-type td, .mmse-print-table td');
-                    if (firstTableTds && firstTableTds.length >= 2) {
-                        firstTableTds[1].textContent = mmseNameInput.value;
-                        firstTableTds[1].style.fontWeight = "bold";
-                    }
-                }
-            }
-
-            if (mmseDateInput && mmseDateInput.value !== "") {
-                if (printMmseDate) {
-                    printMmseDate.textContent = mmseDateInput.value;
-                } else {
-                    const firstTableTds = document.querySelectorAll('table:first-of-type td, .report-table:first-of-type td, .mmse-print-table td');
-                    if (firstTableTds && firstTableTds.length >= 4) {
-                        firstTableTds[3].textContent = mmseDateInput.value;
-                        firstTableTds[3].style.fontWeight = "bold";
-                    }
-                }
-            }
-
-            const mmseY = document.getElementById('mmse-year-text'); if (mmseY) mmseY.textContent = document.getElementById('mmse-year-input')?.value || "—";
-            const mmseM = document.getElementById('mmse-month-text'); if (mmseM) mmseM.textContent = document.getElementById('mmse-month-input')?.value || "—";
-            const mmseD = document.getElementById('mmse-day-text'); if (mmseD) mmseD.textContent = document.getElementById('mmse-day-input')?.value || "—";
-
-            const docInput = document.getElementById('mmse-doc-name-input') || document.getElementById('mmse-doctor-name');
-            const printDoc = document.getElementById('print-m-doc');
-            if (docInput && printDoc) printDoc.textContent = docInput.value || "—";
-
-            const mmseOptionsMap = {
-                orientation: ['嚴重', '偏弱', '尚可', '平穩', '正常'],
-                calculation: ['嚴重', '偏弱', '尚可', '平穩', '正常'],
-                registration: ['嚴重', '偏弱', '尚可', '平穩', '正常'],
-                recall: ['嚴重', '偏弱', '尚可', '平穩', '正常'],
-                language: ['嚴重', '偏弱', '尚可', '平穩', '正常']
-            };
-
-            Object.keys(mmseOptionsMap).forEach(g => {
-                const checkedRadio = document.querySelector(`input[name="${g}"]:checked`);
-                const resBlock = document.getElementById(`res-${g}`) || document.querySelector(`td[id="res-${g}"]`);
-
-                if (resBlock) {
-                    const selectedValue = checkedRadio ? checkedRadio.value : null;
-                    let fullHtml = `<div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-start; align-items: center; width: 100%; box-sizing: border-box;">`;
-
-                    mmseOptionsMap[g].forEach(opt => {
-                        if (opt === selectedValue) {
-                            let themeBg = '#e2f7e3'; let themeColor = '#2ecc71';
-                            if (opt === '尚可') { themeBg = '#e3f2fd'; themeColor = '#3498db'; }
-                            else if (opt === '偏弱') { themeBg = '#fff3e0'; themeColor = '#e67e22'; }
-                            else if (opt === '嚴重') { themeBg = '#ffebee'; themeColor = '#e74c3c'; }
-                            else if (opt === '平穩') { themeBg = '#e8f5e9'; themeColor = '#4caf50'; }
-
-                            fullHtml += `
-                    <span style="display: inline-block; padding: 3px 6px; font-size: 11px; font-weight: bold; border-radius: 4px; 
-                                 background-color: ${themeBg}; color: ${themeColor}; border: 1.5px solid ${themeColor}; text-align: center; white-space: nowrap;">
-                         ${opt}
-                    </span>`;
-                        } else {
-                            fullHtml += `
-                    <span style="display: inline-block; padding: 3px 6px; font-size: 11px; font-weight: normal; border-radius: 4px; 
-                                 background-color: #fafafa; color: #cfd8dc; border: 1px dashed #e0e0e0; text-align: center; white-space: nowrap;">
-                        ${opt}
-                    </span>`;
-                        }
-                    });
-                    fullHtml += `</div>`;
-                    resBlock.innerHTML = fullHtml;
-                }
-
-                // ===== 通用同步 =====
-                panel.querySelectorAll('input[type="text"], input[type="date"], textarea, select')
-                    .forEach(el => {
-                        // 加入這行：如果該輸入框已經有明確的 ID，或者已經手動同步過了，就跳過
-                        // --- 加入這行 ---
-                        // 只要是這幾個 ID，就跳過通用迴圈，交給上面的專屬邏輯處理
-                        if (['cert-year-input', 'cert-month-input', 'cert-day-input'].includes(el.id)) return;
-
-                        const block = el.parentElement?.querySelector('.print-text-block') ||
-                            el.parentElement?.querySelector('.print-inline-text');
-
-                        if (!block) return;
-                        if (el.tagName === 'SELECT') {
-                            // 如果是下拉選單，取顯示文字，若選第一項則顯示為空或 —
-                            block.textContent = (el.selectedIndex > 0) ? el.options[el.selectedIndex].text.split(' (')[0] : "—";
-                        } else {
-                            // 如果是輸入框或文字區
-                            const value = el.value || "—";
-                            block.innerHTML = value
-                                .replace(/&/g, "&amp;")
-                                .replace(/</g, "&lt;")
-                                .replace(/>/g, "&gt;")
-                                .replace(/\n/g, "<br>");
-                        }
-                    });
-            });
-
-            // ===================================================================
-            // 📋 3. 處理「健康檢查報告」同步
-            // ===================================================================
-            if (panelId === 'report-panel' || document.getElementById('report-name-input')) {
-                const repNameIn = document.getElementById('report-name-input');
-                if (repNameIn) {
-                    if (document.getElementById('print-r-name')) document.getElementById('print-r-name').textContent = repNameIn.value || "—";
-                    if (document.getElementById('print-r-gender')) document.getElementById('print-r-gender').textContent = document.getElementById('officer-gender')?.value || "—";
-                    if (document.getElementById('print-r-date')) document.getElementById('print-r-date').textContent = document.getElementById('report-date-input')?.value || "—";
-                    if (document.getElementById('print-report-adv')) document.getElementById('print-report-adv').innerHTML = (document.getElementById('report-adv-input')?.value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
-                    if (document.getElementById('print-rep-doc')) document.getElementById('print-rep-doc').textContent = document.getElementById('report-doc-name')?.value || "—";
-
-                    const idMap = { 'val-k': 'p-k', 'val-na': 'p-na', 'val-cl': 'p-cl', 'val-wbc': 'p-wbc', 'val-hb': 'p-hb', 'val-plt': 'p-plt' };
-                    Object.keys(idMap).forEach(inId => {
-                        const outEl = document.getElementById(idMap[inId]);
-                        if (outEl) outEl.textContent = document.getElementById(inId)?.value || "—";
-                    });
-                }
             }
         }
 
+
         /**
-         * 🖨️ 輸出 A4 PDF / 列印控制
-         */
+                 * 🖨️ 輸出 A4 PDF / 列印控制
+                 */
         function handlePDFExport() {
             if (validateActiveForm()) {
                 syncInputsToPrintBlocks(currentTabId);
@@ -2081,33 +2668,15 @@
         function handleJPGExport() {
             if (!validateActiveForm()) return;
 
-            let targetId = 'report-content';
-            let nameValue = "未命名";
-            let docTypeName = "診斷證明書";
-
-            if (currentTabId === 'report-panel') {
-                targetId = 'report-content';
-                const rName = document.getElementById('report-name-input')?.value.trim();
-                if (rName) nameValue = rName;
-                docTypeName = "健檢報告";
-            } else if (currentTabId === 'cert-panel') {
-                targetId = 'cert-content';
-                const cName = document.getElementById('cert-name-input')?.value.trim();
-                if (cName) nameValue = cName;
-                docTypeName = "診斷證明書";
-            } else if (currentTabId === 'mmse-panel') {
-                targetId = 'mmse-content';
-                const mName = document.getElementById('mmse-name-input')?.value.trim();
-                if (mName) nameValue = mName;
-                docTypeName = "智能狀態測驗";
-            }
+            const cfg = TAB_CONFIG[currentTabId] || TAB_CONFIG['report-panel'];
+            const nameValue = document.getElementById(cfg.nameId)?.value.trim() || "未命名";
 
             const todayStr = new Date().toISOString().slice(0, 10);
-            const finalFileName = `${nameValue}_${docTypeName}_${todayStr}.jpg`;
-            const element = document.getElementById(targetId);
+            const finalFileName = `${nameValue}_${cfg.label}_${todayStr}.jpg`;
+            const element = document.getElementById(cfg.content);
 
             if (!element) {
-                alert(`找不到對應的導出區塊：#${targetId}，請檢查 HTML 結構是否對齊！`);
+                alert(`找不到對應的導出區塊：#${cfg.content}，請檢查 HTML 結構是否對齊！`);
                 return;
             }
 
@@ -2140,6 +2709,259 @@
                 alert('圖片匯出失敗，可能含有不支援的外部資源或圖片。建議改用「輸出 PDF」！');
             });
         }
+
+        /* ==================== 🩸 血液及生化檢驗報告 ==================== */
+        const BLOOD_BASE = [
+            { name: '白血球計數 (WBC)', unit: '10³ / μL', m: '4.0-10.0', f: '4.0-10.0' },
+            { name: '紅血球計數 (RBC)', unit: '10⁶ / μL', m: '3.8-5.5', f: '3.8-5.5' },
+            { name: '血色素 (Hb)', unit: 'g / dL', m: '13.0-17.0', f: '12.0-16.0' },
+            { name: '血小板計數 (PLT)', unit: '10³ / μL', m: '150-400', f: '150-400' },
+            { name: '空腹血糖 (GLU)', unit: 'mg / dL', m: '70-100', f: '70-100' },
+            { name: '肝功能：GOT (AST)', unit: 'U / L', m: '0-40', f: '0-40' },
+            { name: '肝功能：GPT (ALT)', unit: 'U / L', m: '0-40', f: '0-40' },
+            { name: '尿素氮 (BUN)', unit: 'mg / dL', m: '7-20', f: '7-20' },
+            { name: '肌酸酐 (Cr)', unit: 'mg / dL', m: '0.7-1.3', f: '0.5-1.1' }
+        ];
+
+        const BLOOD_EXTRA = [
+            { name: '膽固醇 (Total Chole)', unit: 'mg / dL', m: '130-200', f: '130-200' },
+            { name: '三酸甘油酯 (TG)', unit: 'mg / dL', m: '30-150', f: '30-150' },
+            { name: '尿酸 (UA)', unit: 'mg / dL', m: '3.5-7.2', f: '2.6-6.0' },
+            { name: '鉀離子 (K)', unit: 'mmol / L', m: '3.5-5.0', f: '3.5-5.0' },
+            { name: '低密度脂蛋白 (LDL-C)', unit: 'mg / dL', m: '0-130', f: '0-130' },
+            { name: '高密度脂蛋白 (HDL-C)', unit: 'mg / dL', m: '40-100', f: '50-100' }
+        ];
+
+        function bloodRangeText(m, f, gender) {
+            const fmt = r => r.replace('-', ' ～ ');
+            if (m === f) return fmt(m);
+            if (gender === 'male') return '男：' + fmt(m);
+            if (gender === 'female') return '女：' + fmt(f);
+            return `男：${fmt(m)}<br>女：${fmt(f)}`;
+        }
+
+        function checkBloodRow(tr) {
+            const input = tr.querySelector('.res-input');
+            const badge = tr.querySelector('.flag-badge');
+            const gender = document.getElementById('blood-gender').value;
+
+            tr.querySelector('.range-cell').innerHTML = bloodRangeText(tr.dataset.m, tr.dataset.f, gender);
+
+            const setBadge = (cls, text) => { badge.className = 'flag-badge ' + cls; badge.textContent = text; };
+            const val = parseFloat(input.value);
+
+            // 數值空白，或此項男女標準不同卻尚未選性別 → 不判定
+            if (isNaN(val) || (tr.dataset.m !== tr.dataset.f && !gender)) {
+                setBadge('flag-none', '—');
+                markAbnormalRow(tr, '');
+                return;
+            }
+            const [min, max] = (gender === 'female' ? tr.dataset.f : tr.dataset.m).split('-').map(Number);
+            if (val > max) { setBadge('flag-high', 'H 偏高'); markAbnormalRow(tr, 'high'); }
+            else if (val < min) { setBadge('flag-low', 'L 偏低'); markAbnormalRow(tr, 'low'); }
+            else { setBadge('flag-normal', '正常'); markAbnormalRow(tr, ''); }
+        }
+
+        function refreshBlood() {
+            document.querySelectorAll('#blood-tbody tr').forEach(checkBloodRow);
+        }
+
+        function appendBloodRow(item, deletable) {
+            const tr = document.createElement('tr');
+            tr.dataset.name = item.name;
+            tr.dataset.m = item.m;
+            tr.dataset.f = item.f;
+            tr.innerHTML = `
+                <td>${item.name}</td>
+                <td>
+                    <input type="text" class="text-center res-input" inputmode="decimal" placeholder="輸入數值">
+                    <div class="print-text-block text-center"></div>
+                </td>
+                <td class="text-center">${item.unit}</td>
+                <td class="text-center range-cell"></td>
+                <td class="text-center"><span class="flag-badge flag-none">—</span></td>
+                <td class="text-center col-op no-print">${deletable ? '<button type="button" class="mini-del-btn">刪除</button>' : ''}</td>`;
+
+            tr.querySelector('.res-input').addEventListener('input', () => checkBloodRow(tr));
+            const del = tr.querySelector('.mini-del-btn');
+            if (del) del.addEventListener('click', () => tr.remove());
+
+            document.getElementById('blood-tbody').appendChild(tr);
+            checkBloodRow(tr);
+        }
+
+        function renderBloodBase() {
+            document.getElementById('blood-tbody').innerHTML = '';
+            BLOOD_BASE.forEach(item => appendBloodRow(item, false));
+        }
+
+        function addBloodItem() {
+            const item = BLOOD_EXTRA[document.getElementById('blood-item-selector').value];
+            if (!item) return;
+            const exists = [...document.querySelectorAll('#blood-tbody tr')].some(tr => tr.dataset.name === item.name);
+            if (exists) {
+                alert(`「${item.name}」已在檢驗清單中。`);
+                return;
+            }
+            appendBloodRow(item, true);
+        }
+
+        /* ==================== 🧪 化驗報告（毒物／藥物篩檢） ==================== */
+        const TOX_ITEMS = [
+            { name: '安非他命', code: 'AMP', cutoff: '500 ng/mL' },
+            { name: '甲基安非他命', code: 'MET', cutoff: '500 ng/mL' },
+            { name: '嗎啡（鴉片類）', code: 'MOP', cutoff: '300 ng/mL' },
+            { name: '古柯鹼代謝物', code: 'COC', cutoff: '150 ng/mL' },
+            { name: '大麻（THC）', code: 'THC', cutoff: '50 ng/mL' },
+            { name: '搖頭丸（MDMA）', code: 'MDMA', cutoff: '500 ng/mL' },
+            { name: '苯二氮平類（安眠鎮靜藥）', code: 'BZO', cutoff: '300 ng/mL' },
+            { name: '氯胺酮（K 他命）', code: 'KET', cutoff: '1000 ng/mL' },
+            { name: '酒精（呼氣濃度）', code: 'ALC', cutoff: '≥ 0.15 mg/L' }
+        ];
+
+        function updatePnStyle(sel) {
+            sel.classList.remove('val-H', 'val-NEG', 'val-N');
+            if (sel.value === '陽性') sel.classList.add('val-H');
+            else if (sel.value === '陰性') sel.classList.add('val-NEG');
+            else sel.classList.add('val-N');
+        }
+
+        function renderToxRows() {
+            const tbody = document.getElementById('tox-tbody');
+            tbody.innerHTML = TOX_ITEMS.map(it => `
+                <tr>
+                    <td>${it.name}</td>
+                    <td class="text-center">${it.code}</td>
+                    <td class="text-center">${it.cutoff}</td>
+                    <td>
+                        <select class="pn-select val-N" data-name="${it.code} 結果">
+                            <option value="">—</option>
+                            <option value="陰性">陰性</option>
+                            <option value="陽性">陽性</option>
+                        </select>
+                        <div class="print-text-block text-center"></div>
+                    </td>
+                </tr>`).join('');
+            tbody.querySelectorAll('.pn-select').forEach(sel => sel.addEventListener('change', () => updatePnStyle(sel)));
+        }
+
+        /* ==================== ✍️ 新分頁共用：醫師簽名上傳 ==================== */
+        function previewSig(event, prefix) {
+            const input = event.target;
+            if (!(input.files && input.files[0])) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById(`${prefix}-sig-preview-img`).src = e.target.result;
+                document.getElementById(`${prefix}-sig-preview-wrapper`).style.display = 'inline-block';
+                const uploadBtn = input.parentNode.querySelector('.upload-btn');
+                if (uploadBtn) uploadBtn.style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function removeSig(prefix) {
+            const input = document.getElementById(`${prefix}-sig-upload`);
+            if (input) input.value = '';
+            const img = document.getElementById(`${prefix}-sig-preview-img`);
+            if (img) img.src = '';
+            const wrapper = document.getElementById(`${prefix}-sig-preview-wrapper`);
+            if (wrapper) wrapper.style.display = 'none';
+            const btn = input?.parentNode.querySelector('.upload-btn');
+            if (btn) btn.style.display = 'inline-block';
+        }
+
+        // 新分頁初始化
+        document.addEventListener("DOMContentLoaded", () => {
+            // 血液報告
+            const selector = document.getElementById('blood-item-selector');
+            BLOOD_EXTRA.forEach((item, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = item.name;
+                selector.appendChild(opt);
+            });
+            renderBloodBase();
+            document.getElementById('blood-gender').addEventListener('change', refreshBlood);
+
+            // 化驗報告
+            renderToxRows();
+
+            // 單選限制
+            ['death-manner-cb', 'death-autopsy-cb', 'death-report-cb', 'tox-sum-cb'].forEach(setupSingleCheck);
+        });
+
+        /* ==================== 🏥 醫院選擇（預先寫入） ==================== */
+        // 想新增醫院或指定各院印章圖片：在這裡加一行即可（logo 為印章圖檔名，需放在同目錄）
+        const HOSPITALS = [
+            { name: '聖安地列斯醫療服務隊 (SAMS)', logo: 'logo.png' },
+            { name: '圓帽山醫院', logo: 'logo.png' },
+            { name: '洛聖都醫院', logo: 'logo.png' },
+            { name: '桃源醫院', logo: 'logo.png' }
+        ];
+        const HOSPITAL_CUSTOM = '__custom__';
+        let currentHospital = HOSPITALS[0];
+
+        function applyHospital(h) {
+            currentHospital = h;
+            document.querySelectorAll('.hosp-name').forEach(el => el.textContent = h.name);
+
+            // 更新所有印章圖片，並重置「找不到圖片」的提示
+            document.querySelectorAll('.hospital-stamp-wrapper').forEach(w => {
+                const img = w.querySelector('img');
+                const err = w.querySelector('div');
+                if (err) err.style.display = 'none';
+                if (img) { img.style.display = ''; img.src = h.logo || 'logo.png'; }
+            });
+        }
+
+        function saveHospital(h) {
+            try { localStorage.setItem('sams-hospital', JSON.stringify(h)); } catch (e) { }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const sel = document.getElementById('hospital-select');
+            if (!sel) return;
+
+            let saved = null;
+            try { saved = JSON.parse(localStorage.getItem('sams-hospital')); } catch (e) { }
+
+            const list = HOSPITALS.slice();
+            if (saved && !list.some(h => h.name === saved.name)) list.push(saved); // 之前自訂過的名稱
+
+            const render = (selectedName) => {
+                sel.innerHTML = '';
+                list.forEach((h, i) => {
+                    const o = document.createElement('option');
+                    o.value = i; o.textContent = h.name;
+                    sel.appendChild(o);
+                });
+                const c = document.createElement('option');
+                c.value = HOSPITAL_CUSTOM; c.textContent = '✏️ 自訂醫院名稱…';
+                sel.appendChild(c);
+                const idx = list.findIndex(h => h.name === selectedName);
+                sel.value = idx >= 0 ? idx : 0;
+            };
+
+            const initial = (saved && list.find(h => h.name === saved.name)) || list[0];
+            render(initial.name);
+            applyHospital(initial);
+
+            sel.addEventListener('change', () => {
+                if (sel.value === HOSPITAL_CUSTOM) {
+                    const name = (prompt('請輸入醫院名稱：') || '').trim();
+                    if (!name) { render(currentHospital.name); return; }
+                    let h = list.find(x => x.name === name);
+                    if (!h) { h = { name, logo: 'logo.png' }; list.push(h); }
+                    render(h.name);
+                    applyHospital(h);
+                    saveHospital(h);
+                } else {
+                    const h = list[Number(sel.value)];
+                    applyHospital(h);
+                    saveHospital(h);
+                }
+            });
+        });
     </script>
 </body>
 
